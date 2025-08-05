@@ -65,6 +65,8 @@
             margin-top: 1rem;
             margin-left: 0.5rem;
             margin-right: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
         }
         .btn:hover {
             background-color: #0056b3;
@@ -87,6 +89,12 @@
         }
         .btn-warning:hover {
             background-color: #e0a800;
+        }
+        .btn-secondary {
+            background-color: #6c757d; /* Gray */
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
         }
 
 
@@ -224,7 +232,9 @@
             <h1>HỆ THỐNG BỐC THĂM CHUYÊN NGÀNH THI TỐT NGHIỆP</h1>
             <p>Vui lòng tải lên file danh sách sinh viên theo mẫu (Excel: .xlsx, .xls, .csv)</p>
             <input type="file" id="file-input" accept=".xlsx, .xls, .csv">
+            <br>
             <button id="load-file-btn" class="btn">Bắt đầu phiên bốc thăm</button>
+            <a href="guide.html" target="_blank" class="btn btn-secondary">Xem Hướng dẫn</a>
             <p id="error-message" class="error-message"></p>
         </div>
 
