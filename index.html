@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bốc thăm Chuyên ngành Thi Tốt nghiệp</title>
+    <!-- Link to external libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* General Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        /* Main container for the app */
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 950px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* Headings */
+        h1, h2 {
+            color: #005a9e; /* University Blue */
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        /* Utility class to hide elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Button Styling */
+        .btn {
+            background-color: #007bff; /* Primary Blue */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 1rem;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-success {
+            background-color: #28a745; /* Green */
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-warning {
+            background-color: #ffc107; /* Yellow/Orange */
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+
+        /* File Input Styling */
+        input[type="file"] {
+            display: block;
+            margin: 1.5rem auto;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: #dc3545; /* Red */
+            margin-top: 1rem;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        /* Main App Header */
+        #final-capture-area .header {
+            background-color: #e9ecef;
+            padding: 1.5rem;
+            border-radius: 8px 8px 0 0; /* Rounded corners only on top */
+            text-align: left;
+        }
+        #sv-info p {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+        #sv-info strong {
+            color: #005a9e;
+            display: inline-block;
+            width: 100px;
+        }
+
+        /* Area to be captured as image */
+        #final-capture-area .draw-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            border: 2px solid #e0e0e0;
+            border-top: none; /* Remove top border to merge with header */
+            padding: 1.5rem;
+            border-radius: 0 0 8px 8px; /* Rounded corners only on bottom */
+            margin-bottom: 1rem;
+            background-color: #fafafa;
+        }
+
+        /* Left side: Drawing section */
+        .draw-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-button {
+            width: 160px;
+            height: 160px;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 4px solid #007bff;
+            padding: 5px;
+            background-color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .logo-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+        }
+        .logo-button.disabled {
+            cursor: not-allowed;
+            filter: grayscale(90%);
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Result Display */
+        #result-display {
+            margin-top: 1.5rem;
+            min-height: 80px;
+        }
+        #result-display h2 {
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #28a745;
+            /* Animation removed for stability */
+        }
+        #result-display h2.absent {
+             color: #dc3545; /* Red for absent status */
+        }
+
+        /* Right side: Webcam section */
+        .webcam-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #webcam, #canvas {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 8px;
+            background-color: #333;
+        }
+        #webcam {
+            transform: scaleX(-1); /* Flip horizontally to act like a mirror */
+        }
+        #canvas {
+            display: none; /* Hidden by default, used for snapshot */
+        }
+
+        /* Completion Screen */
+        #completion-screen p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Welcome and File Upload -->
+        <div id="welcome-screen">
+            <h1>HỆ THỐNG BỐC THĂM CHUYÊN NGÀNH THI TỐT NGHIỆP</h1>
+            <p>Vui lòng tải lên file danh sách sinh viên theo mẫu (Excel: .xlsx, .xls, .csv)</p>
+            <input type="file" id="file-input" accept=".xlsx, .xls, .csv">
+            <button id="load-file-btn" class="btn">Bắt đầu phiên bốc thăm</button>
+            <p id="error-message" class="error-message"></p>
+        </div>
+
+        <!-- Screen 2: Main Application for Drawing -->
+        <div id="main-app" class="hidden">
+            
+            <!-- This new wrapper is the final capture area -->
+            <div id="final-capture-area">
+                <div class="header">
+                    <h2>SINH VIÊN BỐC THĂM</h2>
+                    <div id="sv-info">
+                        <p><strong>STT:</strong> <span id="sv-stt"></span></p>
+                        <p><strong>Họ và Tên:</strong> <span id="sv-hoten"></span></p>
+                        <p><strong>MSSV:</strong> <span id="sv-mssv"></span></p>
+                        <p><strong>Thời gian:</strong> <span id="sv-thoigian"></span></p>
+                    </div>
+                </div>
+
+                <div class="draw-area">
+                    <div class="draw-section">
+                        <p>Mời sinh viên nhấn vào logo để bắt đầu</p>
+                        <img src="logo_truong.jpg" alt="Logo Trường - Nhấn để bốc thăm" id="draw-button" class="logo-button">
+                        <div id="result-display" class="hidden">
+                            <h2>Kết quả: <span id="result-specialty"></span></h2>
+                        </div>
+                    </div>
+                    <div class="webcam-section">
+                        <video id="webcam" autoplay playsinline></video>
+                        <canvas id="canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                 <button id="absent-btn" class="btn btn-warning">Vắng mặt</button>
+                 <button id="next-sv-btn" class="btn btn-success hidden">☑️ Xác nhận & Sinh viên tiếp theo</button>
+            </div>
+        </div>
+
+        <!-- Screen 3: Completion and Export -->
+        <div id="completion-screen" class="hidden">
+            <h2>Hoàn tất!</h2>
+            <p>Buổi bốc thăm đã kết thúc. Nhấn nút dưới đây để tải về file kết quả.</p>
+            <button id="export-excel-btn" class="btn btn-success">Tải file ketquaphanchiathiTN.xlsx</button>
+        </div>
+    </div>
+
+    <script>
+    // --- DOM ELEMENT REFERENCES ---
+    const welcomeScreen = document.getElementById('welcome-screen');
+    const mainApp = document.getElementById('main-app');
+    const completionScreen = document.getElementById('completion-screen');
+    
+    const fileInput = document.getElementById('file-input');
+    const loadFileBtn = document.getElementById('load-file-btn');
+    const errorMessage = document.getElementById('error-message');
+    
+    const svStt = document.getElementById('sv-stt');
+    const svHoten = document.getElementById('sv-hoten');
+    const svMssv = document.getElementById('sv-mssv');
+    const svThoiGian = document.getElementById('sv-thoigian'); // New element
+    
+    const drawButton = document.getElementById('draw-button');
+    const resultDisplay = document.getElementById('result-display');
+    const resultSpecialty = document.getElementById('result-specialty');
+    
+    const webcamVideo = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const finalCaptureArea = document.getElementById('final-capture-area');
+    const nextSvBtn = document.getElementById('next-sv-btn');
+    const absentBtn = document.getElementById('absent-btn');
+    const exportExcelBtn = document.getElementById('export-excel-btn');
+
+    // --- APPLICATION STATE ---
+    let studentList = [];
+    let currentIndex = -1;
+    const specialties = ['Nội', 'Ngoại', 'Sản', 'Nhi'];
+    let specialtyPool = [];
+
+    // --- WEBCAM SETUP ---
+    async function setupWebcam() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            webcamVideo.srcObject = stream;
+        } catch (err) {
+            console.error("Webcam access error:", err);
+            errorMessage.textContent = "Không thể truy cập webcam. Vui lòng cấp quyền và tải lại trang.";
+        }
+    }
+
+    // --- FILE HANDLING & SESSION START ---
+    loadFileBtn.addEventListener('click', () => {
+        const file = fileInput.files[0];
+        if (!file) {
+            errorMessage.textContent = 'Vui lòng chọn một file danh sách.';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+
+                studentList = json.map(row => ({
+                    stt: row['STT'],
+                    hoTen: row['HỌ VÀ TÊN'],
+                    mssv: row['MSSV'],
+                    chuyenNganhThi: '',
+                    thoiGian: '', // New field for timestamp
+                    ghiChu: ''
+                }));
+                
+                if (studentList.length === 0 || !studentList[0].mssv) {
+                    errorMessage.textContent = 'File không có dữ liệu hoặc sai định dạng cột (cần có: STT, HỌ VÀ TÊN, MSSV).';
+                    return;
+                }
+
+                initializeSession();
+
+            } catch (err) {
+                console.error("Error processing file:", err);
+                errorMessage.textContent = 'Đã có lỗi khi xử lý file. Vui lòng kiểm tra định dạng file.';
+            }
+        };
+        reader.onerror = () => {
+            errorMessage.textContent = 'Không thể đọc file đã chọn.';
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    // --- SESSION LOGIC ---
+    function initializeSession() {
+        const totalStudents = studentList.length;
+        const baseSlots = Math.floor(totalStudents / 4);
+        const remainder = totalStudents % 4;
+        
+        specialtyPool = [];
+        specialties.forEach((specialty, index) => {
+            const slotsForThisSpecialty = baseSlots + (index < remainder ? 1 : 0);
+            for (let i = 0; i < slotsForThisSpecialty; i++) {
+                specialtyPool.push(specialty);
+            }
+        });
+
+        specialtyPool.sort(() => Math.random() - 0.5);
+
+        welcomeScreen.classList.add('hidden');
+        mainApp.classList.remove('hidden');
+        
+        setupWebcam();
+        loadNextStudent();
+    }
+
+    function loadNextStudent() {
+        currentIndex++;
+        if (currentIndex >= studentList.length) {
+            endSession();
+            return;
+        }
+
+        const student = studentList[currentIndex];
+        svStt.textContent = student.stt;
+        svHoten.textContent = student.hoTen;
+        svMssv.textContent = student.mssv;
+
+        // Reset the UI for the new student
+        svThoiGian.textContent = ''; // Reset time
+        resultDisplay.classList.add('hidden');
+        resultSpecialty.textContent = '';
+        resultSpecialty.parentElement.classList.remove('absent');
+        drawButton.classList.remove('disabled');
+        absentBtn.classList.remove('disabled');
+        nextSvBtn.classList.add('hidden');
+    }
+
+    // --- EVENT LISTENERS FOR DRAWING AND ABSENCE ---
+    drawButton.addEventListener('click', async () => {
+        if (drawButton.classList.contains('disabled')) return;
+        
+        disableTurnButtons();
+
+        const randomIndex = Math.floor(Math.random() * specialtyPool.length);
+        const drawnSpecialty = specialtyPool.splice(randomIndex, 1)[0];
+        
+        studentList[currentIndex].chuyenNganhThi = drawnSpecialty;
+        
+        await finalizeTurn(drawnSpecialty, false);
+    });
+
+    absentBtn.addEventListener('click', async () => {
+        if (absentBtn.classList.contains('disabled')) return;
+
+        disableTurnButtons();
+
+        studentList[currentIndex].chuyenNganhThi = 'Vắng mặt';
+        studentList[currentIndex].ghiChu = 'Vắng mặt';
+        
+        await finalizeTurn('Vắng mặt', true);
+    });
+
+    function disableTurnButtons() {
+        drawButton.classList.add('disabled');
+        absentBtn.classList.add('disabled');
+    }
+
+    async function finalizeTurn(resultText, isAbsent) {
+        // Get and format current time
+        const now = new Date();
+        const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
+            
+        // Update student data and UI
+        studentList[currentIndex].thoiGian = timestamp;
+        svThoiGian.textContent = timestamp;
+
+        // Set the result text and style
+        resultSpecialty.textContent = resultText;
+        if (isAbsent) {
+            resultSpecialty.parentElement.classList.add('absent');
+        }
+        resultDisplay.classList.remove('hidden');
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        await captureAndSave();
+        
+        nextSvBtn.classList.remove('hidden');
+    }
+
+    // --- CAPTURE AND SAVE IMAGE ---
+    async function captureAndSave() {
+        const snapshotCanvas = document.getElementById('canvas');
+        const ctx = snapshotCanvas.getContext('2d');
+
+        if (!webcamVideo.srcObject || !webcamVideo.videoWidth) {
+            console.error("Video stream not ready or webcam permission denied.");
+            resultSpecialty.textContent = 'Lỗi Webcam!';
+            resultSpecialty.parentElement.classList.add('absent');
+            resultDisplay.classList.remove('hidden');
+            return;
+        }
+
+        const videoWidth = webcamVideo.videoWidth;
+        const videoHeight = webcamVideo.videoHeight;
+        snapshotCanvas.width = videoWidth;
+        snapshotCanvas.height = videoHeight;
+
+        ctx.save();
+        ctx.scale(-1, 1);
+        ctx.drawImage(webcamVideo, -videoWidth, 0, videoWidth, videoHeight);
+        ctx.restore();
+
+        webcamVideo.style.display = 'none';
+        snapshotCanvas.style.display = 'block';
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        try {
+            const capturedCanvas = await html2canvas(finalCaptureArea, { 
+                useCORS: true,
+                logging: false
+            });
+            const imageURL = capturedCanvas.toDataURL('image/jpeg', 0.9);
+            
+            const a = document.createElement('a');
+            a.href = imageURL;
+            a.download = `${studentList[currentIndex].mssv}.jpeg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } catch (err) {
+            console.error('Error during html2canvas operation:', err);
+            resultSpecialty.textContent = 'Lỗi chụp ảnh!';
+            resultSpecialty.parentElement.classList.add('absent');
+            resultDisplay.classList.remove('hidden');
+        } finally {
+            webcamVideo.style.display = 'block';
+            snapshotCanvas.style.display = 'none';
+        }
+    }
+
+    // --- NEXT STUDENT BUTTON & END SESSION ---
+    nextSvBtn.addEventListener('click', loadNextStudent);
+
+    function endSession() {
+        mainApp.classList.add('hidden');
+        completionScreen.classList.remove('hidden');
+        
+        if (webcamVideo.srcObject) {
+            webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+        }
+    }
+
+    // --- EXPORT FINAL RESULTS TO EXCEL ---
+    exportExcelBtn.addEventListener('click', () => {
+        const workbook = XLSX.utils.book_new();
+
+        // --- 1. Main Result Sheet ---
+        const mainResultData = studentList.map(sv => ({
+            'STT': sv.stt,
+            'HỌ VÀ TÊN': sv.hoTen,
+            'MSSV': sv.mssv,
+            'Chuyên ngành thi': sv.chuyenNganhThi,
+            'Thời gian bốc thăm': sv.thoiGian, // New column
+            'Ghi chú': sv.ghiChu
+        }));
+        const wsResults = XLSX.utils.json_to_sheet(mainResultData);
+        wsResults['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 15 }];
+        XLSX.utils.book_append_sheet(workbook, wsResults, 'KetQuaBocTham');
+
+        // --- 2. Statistics Sheet ---
+        const stats = { 'Nội': 0, 'Ngoại': 0, 'Sản': 0, 'Nhi': 0, 'Vắng mặt': 0 };
+        studentList.forEach(sv => {
+            if (stats.hasOwnProperty(sv.chuyenNganhThi)) {
+                stats[sv.chuyenNganhThi]++;
+            }
+        });
+        const statsData = Object.keys(stats).map(key => ({
+            'Chuyên ngành / Trạng thái': key,
+            'Số lượng': stats[key]
+        }));
+        const wsStats = XLSX.utils.json_to_sheet(statsData);
+        wsStats['!cols'] = [{ wch: 25 }, { wch: 10 }];
+        XLSX.utils.book_append_sheet(workbook, wsStats, 'ThongKe');
+
+        // --- 3. Individual Specialty Sheets ---
+        specialties.forEach(specialty => {
+            const specialtyData = studentList
+                .filter(sv => sv.chuyenNganhThi === specialty)
+                .map(sv => ({
+                    'STT': sv.stt,
+                    'HỌ VÀ TÊN': sv.hoTen,
+                    'MSSV': sv.mssv
+                }));
+            
+            const header = ['STT', 'HỌ VÀ TÊN', 'MSSV'];
+            const dataWithHeader = [header, ...specialtyData.map(Object.values)];
+            const dataWithTitle = [
+                [`DANH SÁCH SINH VIÊN THI TỐT NGHIỆP BÀN THI ${specialty.toUpperCase()}`],
+                [],
+                ...dataWithHeader
+            ];
+
+            const wsFinal = XLSX.utils.aoa_to_sheet(dataWithTitle);
+            wsFinal['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }];
+            wsFinal['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }];
+
+            XLSX.utils.book_append_sheet(workbook, wsFinal, `DS_${specialty}`);
+        });
+        
+        // Trigger the file download
+        XLSX.writeFile(workbook, 'ketquaphanchiathiTN.xlsx');
+    });
+    </script>
+</body>
+</html>
