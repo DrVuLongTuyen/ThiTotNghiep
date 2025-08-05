@@ -177,7 +177,6 @@
             font-size: 2.8rem;
             font-weight: bold;
             color: #28a745;
-            /* Animation removed for stability */
         }
         #result-display h2.absent {
              color: #dc3545; /* Red for absent status */
@@ -188,6 +187,7 @@
             flex: 1;
             min-width: 300px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
@@ -203,6 +203,11 @@
         }
         #canvas {
             display: none; /* Hidden by default, used for snapshot */
+        }
+        #webcam-status {
+            font-style: italic;
+            color: #6c757d;
+            margin-top: 0.5rem;
         }
 
         /* Completion Screen */
@@ -249,6 +254,7 @@
                     <div class="webcam-section">
                         <video id="webcam" autoplay playsinline></video>
                         <canvas id="canvas"></canvas>
+                        <p id="webcam-status"></p>
                     </div>
                 </div>
             </div>
@@ -280,13 +286,14 @@
     const svStt = document.getElementById('sv-stt');
     const svHoten = document.getElementById('sv-hoten');
     const svMssv = document.getElementById('sv-mssv');
-    const svThoiGian = document.getElementById('sv-thoigian'); // New element
+    const svThoiGian = document.getElementById('sv-thoigian');
     
     const drawButton = document.getElementById('draw-button');
     const resultDisplay = document.getElementById('result-display');
     const resultSpecialty = document.getElementById('result-specialty');
     
     const webcamVideo = document.getElementById('webcam');
+    const webcamStatus = document.getElementById('webcam-status');
     const canvas = document.getElementById('canvas');
     const finalCaptureArea = document.getElementById('final-capture-area');
     const nextSvBtn = document.getElementById('next-sv-btn');
@@ -301,12 +308,28 @@
 
     // --- WEBCAM SETUP ---
     async function setupWebcam() {
+        // Add event listeners for webcam status
+        webcamVideo.oncanplay = () => {
+            webcamStatus.textContent = 'Webcam đã sẵn sàng.';
+            webcamStatus.style.color = 'green';
+            enableTurnButtons();
+        };
+        webcamVideo.onstalled = () => {
+            webcamStatus.textContent = 'Webcam bị lỗi hoặc đang được dùng bởi ứng dụng khác.';
+            webcamStatus.style.color = 'red';
+            disableTurnButtons();
+        };
+
         try {
+            webcamStatus.textContent = 'Đang khởi tạo webcam...';
+            webcamStatus.style.color = '#6c757d';
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             webcamVideo.srcObject = stream;
         } catch (err) {
             console.error("Webcam access error:", err);
-            errorMessage.textContent = "Không thể truy cập webcam. Vui lòng cấp quyền và tải lại trang.";
+            webcamStatus.textContent = 'Không thể truy cập webcam. Vui lòng cấp quyền.';
+            webcamStatus.style.color = 'red';
+            disableTurnButtons();
         }
     }
 
@@ -332,7 +355,7 @@
                     hoTen: row['HỌ VÀ TÊN'],
                     mssv: row['MSSV'],
                     chuyenNganhThi: '',
-                    thoiGian: '', // New field for timestamp
+                    thoiGian: '',
                     ghiChu: ''
                 }));
                 
@@ -390,13 +413,14 @@
         svMssv.textContent = student.mssv;
 
         // Reset the UI for the new student
-        svThoiGian.textContent = ''; // Reset time
+        svThoiGian.textContent = '';
         resultDisplay.classList.add('hidden');
         resultSpecialty.textContent = '';
         resultSpecialty.parentElement.classList.remove('absent');
-        drawButton.classList.remove('disabled');
-        absentBtn.classList.remove('disabled');
         nextSvBtn.classList.add('hidden');
+        
+        // Disable buttons until webcam is confirmed ready for this turn
+        disableTurnButtons();
     }
 
     // --- EVENT LISTENERS FOR DRAWING AND ABSENCE ---
@@ -429,16 +453,18 @@
         absentBtn.classList.add('disabled');
     }
 
+    function enableTurnButtons() {
+        drawButton.classList.remove('disabled');
+        absentBtn.classList.remove('disabled');
+    }
+
     async function finalizeTurn(resultText, isAbsent) {
-        // Get and format current time
         const now = new Date();
         const timestamp = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} ${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
             
-        // Update student data and UI
         studentList[currentIndex].thoiGian = timestamp;
         svThoiGian.textContent = timestamp;
 
-        // Set the result text and style
         resultSpecialty.textContent = resultText;
         if (isAbsent) {
             resultSpecialty.parentElement.classList.add('absent');
@@ -457,7 +483,8 @@
         const snapshotCanvas = document.getElementById('canvas');
         const ctx = snapshotCanvas.getContext('2d');
 
-        if (!webcamVideo.srcObject || !webcamVideo.videoWidth) {
+        // readyState 4 means there is enough data to render the current frame
+        if (!webcamVideo.srcObject || webcamVideo.readyState < 4) {
             console.error("Video stream not ready or webcam permission denied.");
             resultSpecialty.textContent = 'Lỗi Webcam!';
             resultSpecialty.parentElement.classList.add('absent');
@@ -526,7 +553,7 @@
             'HỌ VÀ TÊN': sv.hoTen,
             'MSSV': sv.mssv,
             'Chuyên ngành thi': sv.chuyenNganhThi,
-            'Thời gian bốc thăm': sv.thoiGian, // New column
+            'Thời gian bốc thăm': sv.thoiGian,
             'Ghi chú': sv.ghiChu
         }));
         const wsResults = XLSX.utils.json_to_sheet(mainResultData);
