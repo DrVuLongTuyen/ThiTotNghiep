@@ -1,0 +1,128 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 900px;
+    text-align: center;
+}
+
+h1, h2 {
+    color: #005a9e;
+}
+
+.hidden {
+    display: none;
+}
+
+#welcome-screen button, .controls button, #completion-screen button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 1rem;
+}
+
+#welcome-screen button:hover, .controls button:hover, #completion-screen button:hover {
+    background-color: #0056b3;
+}
+
+input[type="file"] {
+    margin: 1rem 0;
+}
+
+.error {
+    color: #dc3545;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+#main-app .header {
+    background-color: #e9ecef;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+#sv-info p {
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+#sv-info strong {
+    color: #005a9e;
+}
+
+#capture-area {
+    display: flex;
+    gap: 2rem;
+    border: 2px dashed #ccc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.draw-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-button {
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.logo-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
+
+.logo-button.disabled {
+    cursor: not-allowed;
+    filter: grayscale(80%);
+}
+
+#result-display h2 {
+    font-size: 2.5rem;
+    color: #28a745;
+    margin-top: 1.5rem;
+}
+
+.webcam-section {
+    flex: 1;
+}
+
+#webcam {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    background-color: #333;
+    transform: scaleX(-1); /* Lật ngược webcam để giống như gương */
+}
+
+#canvas {
+    display: none;
+}
