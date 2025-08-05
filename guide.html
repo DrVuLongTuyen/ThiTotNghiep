@@ -1,48 +1,138 @@
-HƯỚNG DẪN SỬ DỤNG HỆ THỐNG BỐC THĂM THI TỐT NGHIỆP
-I. Giới thiệu
-Hệ thống được thiết kế để tự động hóa quy trình bốc thăm chuyên ngành thi tốt nghiệp (Nội, Ngoại, Sản, Nhi) một cách công bằng, minh bạch và hiệu quả. Mọi thao tác đều được ghi nhận và lưu lại minh chứng rõ ràng.
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng dẫn sử dụng Hệ thống Bốc thăm</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        h1, h2, h3 {
+            color: #005a9e;
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: none;
+        }
+        code {
+            background-color: #e9ecef;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        .step {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            border-left: 3px solid #007bff;
+        }
+        .note {
+            background-color: #e7f3ff;
+            border-left: 5px solid #007bff;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+        .button-back {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .button-back:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HƯỚNG DẪN SỬ DỤNG HỆ THỐNG BỐC THĂM THI TỐT NGHIỆP</h1>
+        
+        <h2>I. Giới thiệu</h2>
+        <p>Hệ thống được thiết kế để tự động hóa quy trình bốc thăm chuyên ngành thi tốt nghiệp (Nội, Ngoại, Sản, Nhi) một cách công bằng, minh bạch và hiệu quả. Mọi thao tác đều được ghi nhận và lưu lại minh chứng rõ ràng.</p>
 
-II. Chuẩn bị trước khi bốc thăm
-1. Chuẩn bị file danh sách sinh viên (Excel)
-File danh sách phải có định dạng .xlsx, .xls, hoặc .csv và chứa chính xác 3 cột với tiêu đề như sau:
+        <h2>II. Chuẩn bị trước khi bốc thăm</h2>
+        <div class="step">
+            <h3>1. Chuẩn bị file danh sách sinh viên (Excel)</h3>
+            <p>File danh sách phải có định dạng <code>.xlsx</code>, <code>.xls</code>, hoặc <code>.csv</code> và chứa chính xác 3 cột với tiêu đề như sau:</p>
+            <ul>
+                <li>Cột A: <code>STT</code></li>
+                <li>Cột B: <code>HỌ VÀ TÊN</code></li>
+                <li>Cột C: <code>MSSV</code></li>
+            </ul>
+            <p class="note"><strong>Lưu ý:</strong> Hệ thống tự động cân bằng số lượng sinh viên cho các chuyên ngành, không yêu cầu tổng số sinh viên phải chia hết cho 4.</p>
+        </div>
+        <div class="step">
+            <h3>2. Chuẩn bị trình duyệt và thiết bị</h3>
+            <ul>
+                <li>Sử dụng trình duyệt web mới nhất như <strong>Google Chrome</strong> hoặc <strong>Mozilla Firefox</strong> để đảm bảo tương thích.</li>
+                <li>Đảm bảo máy tính có kết nối Webcam và hoạt động tốt.</li>
+            </ul>
+        </div>
 
-Cột A: STT
-Cột B: HỌ VÀ TÊN
-Cột C: MSSV
-Lưu ý: Hệ thống tự động cân bằng số lượng sinh viên cho các chuyên ngành, không yêu cầu tổng số sinh viên phải chia hết cho 4.
+        <h2>III. Quy trình thực hiện</h2>
+        <div class="step">
+            <h3>Bước 1: Bắt đầu phiên bốc thăm</h3>
+            <p>Tại trang chủ, nhấn nút <strong>"Chọn tệp"</strong> và tìm đến file Excel danh sách đã chuẩn bị. Sau khi chọn file, nhấn nút <strong>"Bắt đầu phiên bốc thăm"</strong>.</p>
+        </div>
+        <div class="step">
+            <h3>Bước 2: Tiến hành bốc thăm cho sinh viên</h3>
+            <p>Thông tin của sinh viên theo thứ tự sẽ được hiển thị. Chờ đến khi có thông báo <strong>"Webcam đã sẵn sàng."</strong> màu xanh lá.</p>
+            <p>Mời sinh viên nhấn vào <strong>logo của trường</strong> để thực hiện bốc thăm. Kết quả sẽ hiện ra ngay lập tức.</p>
+        </div>
+        <div class="step">
+            <h3>Bước 3: Xử lý sinh viên vắng mặt</h3>
+            <p>Trong trường hợp sinh viên được gọi tên nhưng vắng mặt, Hội đồng nhấn nút <strong>"Vắng mặt"</strong>. Kết quả sẽ được ghi nhận là "Vắng mặt".</p>
+        </div>
+        <div class="step">
+            <h3>Bước 4: Xác nhận và lưu minh chứng</h3>
+            <p>Sau khi có kết quả (bốc thăm hoặc vắng mặt), một file ảnh minh chứng <code>[MSSV].jpeg</code> sẽ tự động được tải về máy. File ảnh này chứa đầy đủ thông tin sinh viên, kết quả, thời gian và hình ảnh webcam tại thời điểm đó.</p>
+            <p>Nhấn nút <strong>"☑️ Xác nhận & Sinh viên tiếp theo"</strong> để chuyển sang lượt của sinh viên kế tiếp.</p>
+        </div>
+        <div class="step">
+            <h3>Bước 5: Kết thúc và xuất báo cáo</h3>
+            <p>Sau khi sinh viên cuối cùng hoàn tất, màn hình "Hoàn tất!" sẽ hiện ra. Nhấn nút <strong>"Tải file ketquaphanchiathiTN.xlsx"</strong> để tải về file báo cáo tổng hợp cuối cùng.</p>
+            <p class="note">File Excel báo cáo bao gồm nhiều trang tính (sheet): kết quả chi tiết, thống kê số lượng, và danh sách sinh viên theo từng chuyên ngành thi.</p>
+        </div>
 
-2. Chuẩn bị trình duyệt và thiết bị
-Sử dụng trình duyệt web mới nhất như Google Chrome hoặc Mozilla Firefox để đảm bảo tương thích.
-Đảm bảo máy tính có kết nối Webcam và hoạt động tốt.
-III. Quy trình thực hiện
-Bước 1: Bắt đầu phiên bốc thăm
-Tại trang chủ, nhấn nút "Chọn tệp" và tìm đến file Excel danh sách đã chuẩn bị. Sau khi chọn file, nhấn nút "Bắt đầu phiên bốc thăm".
+        <h2>IV. Giải đáp thắc mắc (FAQ)</h2>
+        <div class="warning">
+            <p><strong>Lỗi "Không thể truy cập webcam. Vui lòng cấp quyền."?</strong></p>
+            <p>Khi trình duyệt lần đầu hỏi quyền sử dụng webcam, bạn phải chọn "Cho phép" (Allow). Nếu đã lỡ từ chối, bạn cần vào cài đặt của trình duyệt để cấp lại quyền cho trang web.</p>
+        </div>
+        <div class="warning">
+            <p><strong>Lỗi "Webcam bị lỗi hoặc đang được dùng bởi ứng dụng khác."?</strong></p>
+            <p>Hãy đảm bảo bạn đã tắt các ứng dụng khác đang dùng webcam (ví dụ: Zalo, Zoom, Google Meet) và thử tải lại trang (nhấn phím F5).</p>
+        </div>
 
-Bước 2: Tiến hành bốc thăm cho sinh viên
-Thông tin của sinh viên theo thứ tự sẽ được hiển thị. Chờ đến khi có thông báo "Webcam đã sẵn sàng." màu xanh lá.
-
-Mời sinh viên nhấn vào logo của trường để thực hiện bốc thăm. Kết quả sẽ hiện ra ngay lập tức.
-
-Bước 3: Xử lý sinh viên vắng mặt
-Trong trường hợp sinh viên được gọi tên nhưng vắng mặt, Hội đồng nhấn nút "Vắng mặt". Kết quả sẽ được ghi nhận là "Vắng mặt".
-
-Bước 4: Xác nhận và lưu minh chứng
-Sau khi có kết quả (bốc thăm hoặc vắng mặt), một file ảnh minh chứng [MSSV].jpeg sẽ tự động được tải về máy. File ảnh này chứa đầy đủ thông tin sinh viên, kết quả, thời gian và hình ảnh webcam tại thời điểm đó.
-
-Nhấn nút "☑️ Xác nhận & Sinh viên tiếp theo" để chuyển sang lượt của sinh viên kế tiếp.
-
-Bước 5: Kết thúc và xuất báo cáo
-Sau khi sinh viên cuối cùng hoàn tất, màn hình "Hoàn tất!" sẽ hiện ra. Nhấn nút "Tải file ketquaphanchiathiTN.xlsx" để tải về file báo cáo tổng hợp cuối cùng.
-
-File Excel báo cáo bao gồm nhiều trang tính (sheet): kết quả chi tiết, thống kê số lượng, và danh sách sinh viên theo từng chuyên ngành thi.
-
-IV. Giải đáp thắc mắc (FAQ)
-Lỗi "Không thể truy cập webcam. Vui lòng cấp quyền."?
-
-Khi trình duyệt lần đầu hỏi quyền sử dụng webcam, bạn phải chọn "Cho phép" (Allow). Nếu đã lỡ từ chối, bạn cần vào cài đặt của trình duyệt để cấp lại quyền cho trang web.
-
-Lỗi "Webcam bị lỗi hoặc đang được dùng bởi ứng dụng khác."?
-
-Hãy đảm bảo bạn đã tắt các ứng dụng khác đang dùng webcam (ví dụ: Zalo, Zoom, Google Meet) và thử tải lại trang (nhấn phím F5).
-
-Quay về trang Bốc thăm
+        <a href="index.html" class="button-back">Quay về trang Bốc thăm</a>
+    </div>
+</body>
+</html>
